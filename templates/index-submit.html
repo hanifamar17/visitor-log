@@ -45,7 +45,7 @@
                 <p class="pr-3 text-sm opacity-75">Easily record your visit with our web-based visitor log system. This
                     platform supports efficient service, helps evaluate library performance, and enhances the experience
                     for all visitors. Thank you for being part of our literacy journey!</p>
-
+<!--
                 <div class="mt-8">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -56,7 +56,8 @@
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
-                </div>
+                </div>-->
+
             </div>
         </div>
         <div class="flex justify-center self-center  z-10 ">
@@ -67,7 +68,7 @@
                 </div>
 
                 <div class="space-y-6">
-                    <form action="{{ url_for('home_submit') }}" method="POST" enctype="multipart/form-data">
+                    <form id="visitorForm" action="{{ url_for('home_submit') }}" method="POST" enctype="multipart/form-data">
                         <div class="space-y-6">
                             <div>
                                 <input type="text" name="id_pengunjung" id="id_pengunjung" autocomplete="id_pengunjung"
@@ -89,13 +90,85 @@
                         </div>
                     </form>
 
+                    <!--Sweetalert-->
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.js"></script>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.css">
+                    <script>
+                        document.getElementById('visitorForm').addEventListener('submit', async function(e) {
+                            e.preventDefault();
+                            
+                            // Disable submit button while processing
+                            const submitButton = this.querySelector('button[type="submit"]');
+                            submitButton.disabled = true;
+                            submitButton.innerHTML = 'Processing...';
+                            
+                            const formData = new FormData(this);
+                            
+                            try {
+                                const response = await fetch(this.action, {
+                                    method: 'POST',
+                                    body: formData
+                                });
+                                
+                                const result = await response.json();
+                                
+                                if (result.success) {
+                                    await Swal.fire({
+                                        title: 'Selamat Datang!',
+                                        html: `Selamat datang <b>${result.nama}</b>, selamat membaca!`,
+                                        icon: 'success',
+                                        timer: 3000,
+                                        showConfirmButton: false
+                                    });
+                                    window.location.href = result.redirect;
+                                } else {
+                                    await Swal.fire({
+                                        title: 'Error!',
+                                        text: 'ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    // Reset form on error
+                                    this.reset();
+                                    document.getElementById('id_pengunjung').focus();
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Terjadi kesalahan pada sistem',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            } finally {
+                                // Re-enable submit button
+                                submitButton.disabled = false;
+                                submitButton.innerHTML = 'Submit';
+                            }
+                        });
+                    </script>
+
                 </div>
+
                 <div class="mt-7 text-center text-gray-800 text-xs">
-                    <span>
-                        Copyright © 2025
-                        <a href="#" rel="" target="" title=""
-                            class="text-purple-700 hover:text-purple-900 ">wkwk</a></span>
+                    <p>
+                        Copyright © <span id="year"></span>
+                        <a href="https://github.com/hanifamar17/visitor-log" rel="" target="_blank" title="Github Visilog"
+                            class="text-purple-700 hover:text-purple-900 ">Github</a>
+                    </p>
                 </div>
+
+                <script>
+                    // Ambil elemen dengan id "year"
+                    const yearElement = document.getElementById('year');
+            
+                    // Dapatkan tahun saat ini
+                    const currentYear = new Date().getFullYear();
+            
+                    // Setel tahun ke elemen tersebut
+                    yearElement.textContent = currentYear;
+                </script>
             </div>
         </div>
     </div>

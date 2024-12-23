@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from openpyxl import load_workbook
 from datetime import datetime
 
@@ -39,9 +39,18 @@ def home():
                 tanggal_kunjungan = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 kunjungan_sheet.append([pengunjung[0], pengunjung[1], pengunjung[2], tanggal_kunjungan])
                 wb.save(EXCEL_FILE)
-                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>, selamat membaca!", 'success')
+                #flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>, selamat membaca!", 'success')
+                return jsonify({
+                'success': True,
+                'nama': pengunjung[1],
+                'redirect': url_for('home')
+            })
             else:
-                flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
+                #flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
+                return jsonify({
+                'success': False,
+                'redirect': url_for('home')
+            })
         except Exception as e:
             flash(f"Terjadi kesalahan: {e}", 'danger')
 
@@ -72,9 +81,18 @@ def home_submit():
                 tanggal_kunjungan = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 kunjungan_sheet.append([pengunjung[0], pengunjung[1], pengunjung[2], tanggal_kunjungan])
                 wb.save(EXCEL_FILE)
-                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>, selamat membaca!", 'success')
+                #flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>, selamat membaca!", 'success')
+                return jsonify({
+                'success': True,
+                'nama': pengunjung[1],
+                'redirect': url_for('home_submit')
+            })
             else:
-                flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
+                #flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
+                return jsonify({
+                'success': False,
+                'redirect': url_for('home_submit')
+            })
         except Exception as e:
             flash(f"Terjadi kesalahan: {e}", 'danger')
 
