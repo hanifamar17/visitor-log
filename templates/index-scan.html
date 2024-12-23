@@ -104,38 +104,60 @@
 
                     <!--Sweetalert-->
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.js"></script>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.css">
+                    <script
+                        src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.js"></script>
+                    <link rel="stylesheet"
+                        href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.css">
                     <script>
-                        document.getElementById('visitorForm').addEventListener('submit', async function(e) {
+                        document.getElementById('visitorForm').addEventListener('submit', async function (e) {
                             e.preventDefault();
-                            
+
                             const formData = new FormData(this);
-                            
+
                             try {
                                 const response = await fetch(this.action, {
                                     method: 'POST',
                                     body: formData
                                 });
-                                
+
                                 const result = await response.json();
-                                
+
                                 if (result.success) {
                                     await Swal.fire({
-                                        title: 'Selamat Datang!',
-                                        html: `Selamat datang <b>${result.nama}</b>, selamat membaca!`,
+                                        title: `Selamat Datang!`,
+                                        html: `<p class="mb-6">Hai <span class="font-bold">${result.nama}!</span> Selamat membaca!</p>`,
                                         icon: 'success',
                                         timer: 3000,
-                                        showConfirmButton: false
+                                        timerProgressBar: true,
+                                        showConfirmButton: false,
+                                        customClass: {
+                                            popup: 'rounded shadow-lg',
+                                            title: 'text-2xl font-bold text-gray-700',
+                                            htmlContainer: 'text-gray-700',
+                                            icon: 'text-green-500',
+                                            confirmButton: 'hidden'
+                                        },
+                                        background: '#ffffff',
                                     });
                                     window.location.href = result.redirect;
                                 } else {
                                     await Swal.fire({
-                                        title: 'Error!',
-                                        text: 'ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
+                                        title: 'Oops!',
+                                        html: 'ID anda tidak terdaftar dalam sistem. Silakan hubungi petugas!',
+                                        icon: 'warning',
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                        confirmButtonText: 'Siap',
+                                        customClass: {
+                                            popup: 'rounded shadow-lg',
+                                            title: 'text-2xl font-bold text-gray-700',
+                                            htmlContainer: 'text-gray-700',
+                                            confirmButton: 'bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-2 rounded transition-colors',
+                                        },
+                                        background: '#ffffff',
+                                        iconColor: '#F59E0B'
                                     });
+                                    window.location.href = result.redirect;
                                 }
                             } catch (error) {
                                 console.error('Error:', error);
@@ -143,13 +165,22 @@
                                     title: 'Error!',
                                     text: 'Terjadi kesalahan pada sistem',
                                     icon: 'error',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        popup: 'rounded-lg shadow-md',
+                                        title: 'text-lg font-semibold text-gray-800 mb-2',
+                                        htmlContainer: 'text-base text-gray-600',
+                                        confirmButton: 'bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-2 rounded-lg transition-colors',
+                                        icon: 'border-0'
+                                    },
+                                    background: '#ffffff',
+                                    iconColor: '#EF4444'
                                 });
                             }
                         });
-                
+
                         // Autosubmit functionality
-                        document.getElementById('id_pengunjung').addEventListener('input', function() {
+                        document.getElementById('id_pengunjung').addEventListener('input', function () {
                             if (this.value.length > 0) {
                                 this.form.dispatchEvent(new Event('submit'));
                             }
@@ -157,22 +188,22 @@
                     </script>
 
                 </div>
-                
+
                 <div class="mt-7 text-center text-gray-800 text-xs">
                     <p>
                         Copyright © <span id="year"></span>
-                        <a href="https://github.com/hanifamar17/visitor-log" rel="" target="_blank" title="Github Visilog"
-                            class="text-purple-700 hover:text-purple-900 ">Github</a>
+                        <a href="https://github.com/hanifamar17/visitor-log" rel="" target="_blank"
+                            title="Github Visilog" class="text-purple-700 hover:text-purple-900 ">Github</a>
                     </p>
                 </div>
 
                 <script>
                     // Ambil elemen dengan id "year"
                     const yearElement = document.getElementById('year');
-            
+
                     // Dapatkan tahun saat ini
                     const currentYear = new Date().getFullYear();
-            
+
                     // Setel tahun ke elemen tersebut
                     yearElement.textContent = currentYear;
                 </script>

@@ -45,7 +45,7 @@
                 <p class="pr-3 text-sm opacity-75">Easily record your visit with our web-based visitor log system. This
                     platform supports efficient service, helps evaluate library performance, and enhances the experience
                     for all visitors. Thank you for being part of our literacy journey!</p>
-<!--
+                <!--
                 <div class="mt-8">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -68,7 +68,8 @@
                 </div>
 
                 <div class="space-y-6">
-                    <form id="visitorForm" action="{{ url_for('home_submit') }}" method="POST" enctype="multipart/form-data">
+                    <form id="visitorForm" action="{{ url_for('home_submit') }}" method="POST"
+                        enctype="multipart/form-data">
                         <div class="space-y-6">
                             <div>
                                 <input type="text" name="id_pengunjung" id="id_pengunjung" autocomplete="id_pengunjung"
@@ -92,42 +93,53 @@
 
                     <!--Sweetalert-->
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.js"></script>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.css">
+                    <script
+                        src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.js"></script>
+                    <link rel="stylesheet"
+                        href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.css">
                     <script>
-                        document.getElementById('visitorForm').addEventListener('submit', async function(e) {
+                        document.getElementById('visitorForm').addEventListener('submit', async function (e) {
                             e.preventDefault();
-                            
+
                             // Disable submit button while processing
                             const submitButton = this.querySelector('button[type="submit"]');
                             submitButton.disabled = true;
                             submitButton.innerHTML = 'Processing...';
-                            
+
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+
                             const formData = new FormData(this);
-                            
+
                             try {
                                 const response = await fetch(this.action, {
                                     method: 'POST',
                                     body: formData
                                 });
-                                
+
                                 const result = await response.json();
-                                
+
                                 if (result.success) {
-                                    await Swal.fire({
+                                    await Toast.fire({
                                         title: 'Selamat Datang!',
-                                        html: `Selamat datang <b>${result.nama}</b>, selamat membaca!`,
+                                        html: `Hai <b>${result.nama}</b>, selamat membaca!`,
                                         icon: 'success',
-                                        timer: 3000,
-                                        showConfirmButton: false
                                     });
                                     window.location.href = result.redirect;
                                 } else {
-                                    await Swal.fire({
-                                        title: 'Error!',
-                                        text: 'ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!',
+                                    await Toast.fire({
                                         icon: 'error',
-                                        confirmButtonText: 'OK'
+                                        title: 'ID pengunjung tidak terdaftar',
+                                        timer: 3000
                                     });
                                     // Reset form on error
                                     this.reset();
@@ -154,18 +166,18 @@
                 <div class="mt-7 text-center text-gray-800 text-xs">
                     <p>
                         Copyright © <span id="year"></span>
-                        <a href="https://github.com/hanifamar17/visitor-log" rel="" target="_blank" title="Github Visilog"
-                            class="text-purple-700 hover:text-purple-900 ">Github</a>
+                        <a href="https://github.com/hanifamar17/visitor-log" rel="" target="_blank"
+                            title="Github Visilog" class="text-purple-700 hover:text-purple-900 ">Github</a>
                     </p>
                 </div>
 
                 <script>
                     // Ambil elemen dengan id "year"
                     const yearElement = document.getElementById('year');
-            
+
                     // Dapatkan tahun saat ini
                     const currentYear = new Date().getFullYear();
-            
+
                     // Setel tahun ke elemen tersebut
                     yearElement.textContent = currentYear;
                 </script>
