@@ -52,13 +52,11 @@
                 <div class="mb-7">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
-
                     {% for category, message in messages %}
                     <div class="rounded-lg text-purple-800">
-                        <span class="{{ category }}">{{ message }}</span>
+                        <span class="alert alert-{{ category }}">{{ message|safe }}</span>
                     </div>
                     {% endfor %}
-
                     {% endif %}
                     {% endwith %}
                 </div>
@@ -68,32 +66,26 @@
                 </div>
 
                 <div class="space-y-6">
-                    <form action="{{ url_for('home') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url_for('home_submit') }}" method="POST" enctype="multipart/form-data">
                         <div class="space-y-6">
                             <div>
                                 <input type="text" name="id_pengunjung" id="id_pengunjung" autocomplete="id_pengunjung"
-                                    required placeholder="Masukkan Id atau Nama" autofocus
+                                    required placeholder="Enter your ID" autofocus
                                     class="w-full text-sm  px-4 py-3 bg-gray-200 focus:bg-gray-100 border  border-gray-200 rounded-lg focus:outline-none focus:border-purple-400" />
                             </div>
 
                             <div>
-                                <span 
-                                    class="w-full flex justify-center bg-purple-900 text-gray-100 p-3 rounded-lg tracking-wide font-semibold">
-                                    Scan Your ID!
-                                </span>
+                                <button type="submit"
+                                    class="w-full flex justify-center bg-purple-700 hover:bg-purple-900 text-gray-100 p-3 rounded-lg tracking-wide font-semibold cursor-pointer transition ease-in duration-300">
+                                    Submit
+                                </button>
                                 <p class="text-gray-600 mt-2">Don't have an ID? <a href="#"
-                                    class="text-sm text-purple-700 hover:text-purple-900">Contact the Librarian!</a></p>
+                                    class="text-sm text-purple-800 hover:text-purple-900">Contact the Librarian!</a></p>
+                                    <a href="{{ url_for('home') }}"
+                                    class="text-sm text-purple-700 hover:text-purple-900">Use a scanner!</a>
                             </div>
                         </div>
                     </form>
-
-                    <script>
-                        document.getElementById('id_pengunjung').addEventListener('input', function () {
-                            if (this.value.length > 0) {  // Jika ada input
-                                this.form.submit();     // Kirim form otomatis
-                            }
-                        });
-                    </script>
 
                 </div>
                 <div class="mt-7 text-center text-gray-800 text-xs">

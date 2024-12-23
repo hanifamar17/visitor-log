@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Buku Kunjungan</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amita:wght@400;700&family=Berkshire+Swash&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind -->
+    <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!--Replace with your tailwind.css once created-->
+    <script src="https://kit.fontawesome.com/3ddb5c222d.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='img/visitor.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col justify-center items-center min-h-screen">
+    <div class="relative min-h-screen sm:flex sm:flex-row  justify-center bg-transparent rounded-3xl">
+        <div class="flex-col flex  self-center lg:px-14 sm:max-w-4xl xl:max-w-md  z-10">
+            <div class="self-start hidden lg:flex flex-col text-gray-800">
+                <h1 class="my-3 font-semibold text-3xl">KH. Asyhari Marzuqi Library</h1>
+                <p class="pr-3 text-sm opacity-75">Easily record your visit with our web-based visitor log system. This
+                    platform supports efficient service, helps evaluate library performance, and enhances the experience
+                    for all visitors. Thank you for being part of our literacy journey!</p>
+            </div>
+        </div>
+        <div class="flex justify-center self-center  z-10 ">
+            <div class="p-12 bg-white bg-opacity-60 mx-auto rounded-3xl w-96">
+                <div class="mb-7">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+
+                    {% for category, message in messages %}
+                    <div class="rounded-lg text-purple-800">
+                        <span class="{{ category }}">{{ message|safe }}</span>
+                    </div>
+                    {% endfor %}
+
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="mb-7">
+                    <h3 class="font-semibold text-2xl text-gray-800">Visitor Log Library</h3>
+                    <p class="text-gray-600">Hold your ID up to the scanner!</p>
+                </div>
+
+                <div class="space-y-6">
+                    <form action="{{ url_for('home') }}" method="POST" enctype="multipart/form-data">
+                        <div class="space-y-6">
+                            <div>
+                                <input type="text" name="id_pengunjung" id="id_pengunjung" autocomplete="id_pengunjung"
+                                    required placeholder="Enter your ID" autofocus
+                                    class="w-full text-sm  px-4 py-3 bg-gray-200 focus:bg-gray-100 border  border-gray-200 rounded-lg focus:outline-none focus:border-purple-400" />
+                            </div>
+
+                            <div>
+                                <span
+                                    class="w-full flex justify-center bg-purple-900 text-gray-100 p-3 rounded-lg tracking-wide font-semibold">
+                                    Scan Your ID!
+                                </span>
+                                <p class="text-gray-600 mt-2">Don't have an ID? <a href="#"
+                                        class="text-sm text-purple-700 hover:text-purple-900">Contact the Librarian!</a>
+                                </p>
+                                <a href="{{ url_for('home_submit') }}"
+                                    class="text-sm text-purple-700 hover:text-purple-900">Submit manually!</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <script>
+                        document.getElementById('id_pengunjung').addEventListener('input', function () {
+                            if (this.value.length > 0) {  // Jika ada input
+                                this.form.submit();     // Kirim form otomatis
+                            }
+                        });
+                    </script>
+
+                </div>
+                <div class="mt-7 text-center text-gray-800 text-xs">
+                    <span>
+                        Copyright © 2025
+                        <a href="#" rel="" target="" title=""
+                            class="text-purple-700 hover:text-purple-900 ">wkwk</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-transparent absolute w-full bottom-0 left-0 z-30">
+        <div class="container p-5 mx-auto  flex items-center justify-between ">
+            <div class="flex mr-auto">
+                <p class="text-md uppercase">KH. Asyhari Marzuqi Library </p>
+            </div>
+
+        </div>
+    </footer>
+</body>
+
+</html>

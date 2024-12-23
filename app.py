@@ -39,7 +39,7 @@ def home():
                 tanggal_kunjungan = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 kunjungan_sheet.append([pengunjung[0], pengunjung[1], pengunjung[2], tanggal_kunjungan])
                 wb.save(EXCEL_FILE)
-                flash(f"Selamat datang {pengunjung[1]}. Selamat membaca!", 'success')
+                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>. Selamat membaca!", 'success')
             else:
                 flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
         except Exception as e:
@@ -47,7 +47,40 @@ def home():
 
         return redirect(url_for('home'))
 
-    return render_template('index.html')
+    return render_template('index-scan.html')
+
+@app.route("/home/submit", methods=["POST", "GET"])
+def home_submit():
+    if request.method == 'POST':
+        id_pengunjung = request.form.get('id_pengunjung')
+
+        try:
+            # Load workbook dan sheet
+            wb = load_workbook(EXCEL_FILE)
+            pengunjung_sheet = wb[PENGUNJUNG_SHEET]
+            kunjungan_sheet = wb[KUNJUNGAN_SHEET]
+
+            # Cari data pengunjung berdasarkan ID
+            pengunjung = None
+            for row in pengunjung_sheet.iter_rows(min_row=2, values_only=True):
+                if str(row[0]) == id_pengunjung:  # Kolom pertama adalah ID
+                    pengunjung = row
+                    break
+
+            if pengunjung:
+                # Rekam kunjungan
+                tanggal_kunjungan = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                kunjungan_sheet.append([pengunjung[0], pengunjung[1], pengunjung[2], tanggal_kunjungan])
+                wb.save(EXCEL_FILE)
+                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>. Selamat membaca!", 'success')
+            else:
+                flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
+        except Exception as e:
+            flash(f"Terjadi kesalahan: {e}", 'danger')
+
+        return redirect(url_for('home_submit'))
+
+    return render_template('index-submit.html')
 
 if __name__ == '__main__':
     app.run(debug = True, host = '0.0.0.0', port = 5555)
