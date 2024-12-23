@@ -39,7 +39,7 @@ def home():
                 tanggal_kunjungan = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 kunjungan_sheet.append([pengunjung[0], pengunjung[1], pengunjung[2], tanggal_kunjungan])
                 wb.save(EXCEL_FILE)
-                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>. Selamat membaca!", 'success')
+                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>, selamat membaca!", 'success')
             else:
                 flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
         except Exception as e:
@@ -72,7 +72,7 @@ def home_submit():
                 tanggal_kunjungan = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 kunjungan_sheet.append([pengunjung[0], pengunjung[1], pengunjung[2], tanggal_kunjungan])
                 wb.save(EXCEL_FILE)
-                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>. Selamat membaca!", 'success')
+                flash(f"Selamat datang <span class='font-bold'>{pengunjung[1]}</span>, selamat membaca!", 'success')
             else:
                 flash("ID pengunjung tidak terdaftar dalam sistem. Silakan hubungi petugas!", 'danger')
         except Exception as e:

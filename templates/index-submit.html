@@ -45,21 +45,22 @@
                 <p class="pr-3 text-sm opacity-75">Easily record your visit with our web-based visitor log system. This
                     platform supports efficient service, helps evaluate library performance, and enhances the experience
                     for all visitors. Thank you for being part of our literacy journey!</p>
-            </div>
-        </div>
-        <div class="flex justify-center self-center  z-10 ">
-            <div class="p-12 bg-white bg-opacity-60 mx-auto rounded-3xl w-96">
-                <div class="mb-7">
+
+                <div class="mt-8">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                     {% for category, message in messages %}
-                    <div class="rounded-lg text-purple-800">
-                        <span class="alert alert-{{ category }}">{{ message|safe }}</span>
+                    <div class="rounded-lg bg-white p-4 bg-opacity-60">
+                        <span class="text-purple-700 alert alert-{{ category }}">{{ message|safe }}</span>
                     </div>
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
                 </div>
+            </div>
+        </div>
+        <div class="flex justify-center self-center  z-10 ">
+            <div class="p-12 bg-white bg-opacity-60 mx-auto rounded-3xl w-96">
                 <div class="mb-7">
                     <h3 class="font-semibold text-2xl text-gray-800">Visitor Log Library</h3>
                     <p class="text-gray-600">Hold your ID up to the scanner!</p>
@@ -79,9 +80,10 @@
                                     class="w-full flex justify-center bg-purple-700 hover:bg-purple-900 text-gray-100 p-3 rounded-lg tracking-wide font-semibold cursor-pointer transition ease-in duration-300">
                                     Submit
                                 </button>
-                                <p class="text-gray-600 mt-2">Don't have an ID? <a href="#"
-                                    class="text-sm text-purple-800 hover:text-purple-900">Contact the Librarian!</a></p>
-                                    <a href="{{ url_for('home') }}"
+                                <p class="text-gray-600 mt-2">Don't have an ID?
+                                    <a class="text-sm text-purple-700">Contact the Librarian!</a>
+                                </p>
+                                <a href="{{ url_for('home') }}"
                                     class="text-sm text-purple-700 hover:text-purple-900">Use a scanner!</a>
                             </div>
                         </div>
