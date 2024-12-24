@@ -110,7 +110,7 @@
                                 toast: true,
                                 position: "top-end",
                                 showConfirmButton: false,
-                                timer: 3000,
+                                timer: 2000,
                                 timerProgressBar: true,
                                 didOpen: (toast) => {
                                     toast.onmouseenter = Swal.stopTimer;
@@ -137,8 +137,9 @@
                                     window.location.href = result.redirect;
                                 } else {
                                     await Toast.fire({
-                                        icon: 'error',
+                                        icon: 'warning',
                                         title: 'ID pengunjung tidak terdaftar',
+                                        html: 'Silakan hubungi petugas!',
                                         timer: 3000
                                     });
                                     // Reset form on error

@@ -112,6 +112,18 @@
                         document.getElementById('visitorForm').addEventListener('submit', async function (e) {
                             e.preventDefault();
 
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+
                             const formData = new FormData(this);
 
                             try {
@@ -123,41 +135,22 @@
                                 const result = await response.json();
 
                                 if (result.success) {
-                                    await Swal.fire({
-                                        title: `Selamat Datang!`,
-                                        html: `<p class="mb-6">Hai <span class="font-bold">${result.nama}!</span> Selamat membaca!</p>`,
+                                    await Toast.fire({
+                                        title: 'Selamat Datang!',
+                                        html: `Hai <b>${result.nama}</b>, selamat membaca!`,
                                         icon: 'success',
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                        customClass: {
-                                            popup: 'rounded shadow-lg',
-                                            title: 'text-2xl font-bold text-gray-700',
-                                            htmlContainer: 'text-gray-700',
-                                            icon: 'text-green-500',
-                                            confirmButton: 'hidden'
-                                        },
-                                        background: '#ffffff',
                                     });
                                     window.location.href = result.redirect;
                                 } else {
-                                    await Swal.fire({
-                                        title: 'Oops!',
-                                        html: 'ID anda tidak terdaftar dalam sistem. Silakan hubungi petugas!',
+                                    await Toast.fire({
                                         icon: 'warning',
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        confirmButtonText: 'Siap',
-                                        customClass: {
-                                            popup: 'rounded shadow-lg',
-                                            title: 'text-2xl font-bold text-gray-700',
-                                            htmlContainer: 'text-gray-700',
-                                            confirmButton: 'bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-2 rounded transition-colors',
-                                        },
-                                        background: '#ffffff',
-                                        iconColor: '#F59E0B'
+                                        title: 'ID pengunjung tidak terdaftar',
+                                        html: 'Silakan hubungi petugas!',
+                                        timer: 3000
                                     });
-                                    window.location.href = result.redirect;
+                                    // Reset form on error
+                                    this.reset();
+                                    document.getElementById('id_pengunjung').focus();
                                 }
                             } catch (error) {
                                 console.error('Error:', error);
@@ -165,16 +158,7 @@
                                     title: 'Error!',
                                     text: 'Terjadi kesalahan pada sistem',
                                     icon: 'error',
-                                    confirmButtonText: 'OK',
-                                    customClass: {
-                                        popup: 'rounded-lg shadow-md',
-                                        title: 'text-lg font-semibold text-gray-800 mb-2',
-                                        htmlContainer: 'text-base text-gray-600',
-                                        confirmButton: 'bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-2 rounded-lg transition-colors',
-                                        icon: 'border-0'
-                                    },
-                                    background: '#ffffff',
-                                    iconColor: '#EF4444'
+                                    confirmButtonText: 'OK'
                                 });
                             }
                         });
