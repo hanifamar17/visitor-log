@@ -9,7 +9,7 @@ Instalasi Flask:
 pip install Flask
 ```
 
-Instalasi openpyxl
+Instalasi openpyxl:
 ```bash
 pip install openpyxl
 ```
