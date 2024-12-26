@@ -20,4 +20,4 @@ File ```App.bat``` digunakan sebagai shortcut untuk menjalankan aplikasi, berisi
 
 
 Tampilan aplikasi:
-![Tampilan Aplikasi]<img src="img/system.png" alt="Tampilan Aplikasi" width="400">
+<img src="{{ url_for('static', filename='img/system.png') }}" alt="Tampilan Aplikasi" width="400">
