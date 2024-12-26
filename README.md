@@ -7,7 +7,7 @@
 
 To use this system, you need to perform a few installations first
 
-Flask instalasion:
+Flask installation:
 ```bash
 pip install Flask
 ```
