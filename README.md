@@ -5,7 +5,7 @@
 
 <h2>How to use the system</h2>
 
-To use this system, you need to do some installation firts
+To use this system, you need to perform a few installations first
 
 Flask instalasion:
 ```bash
