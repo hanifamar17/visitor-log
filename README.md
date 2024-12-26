@@ -17,3 +17,7 @@ pip install openpyxl
 <h2>App-bat</h2>
 
 File ```App.bat``` digunakan sebagai shortcut untuk menjalankan aplikasi, berisi serangkaian perintah untuk menjalankan dan membuka sistem di browser.
+
+
+Tampilan aplikasi:
+![Tampilan Aplikasi]<img src="img/system.png" alt="Tampilan Aplikasi" width="400">
