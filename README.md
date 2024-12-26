@@ -1,4 +1,4 @@
-﻿<h2>visitor-log</h2>
+﻿<h2>Visitor-log</h2>
 
 <strong>Visitor-log</strong> digunakan untuk merekam kunjungan siswa di perpustakaan dengan berbasis web. Data siswa yang selanjutnya disebut sebagai <em>visitor</em> disimpan dalam file excel dan data rekaman kunjungan visitor juga disimpan dalam file excel yang sama.
 
