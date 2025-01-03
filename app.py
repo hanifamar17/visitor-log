@@ -26,10 +26,10 @@ with open('credentials.json', 'w') as cred_file:
 
 # Autentikasi Google Drive
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile("credentials.json")
+gauth.LoadCredentialsFile(google_credentials)
 if not gauth.credentials or gauth.credentials.invalid:
     gauth.LocalWebserverAuth()  # Membuka autentikasi di browser
-    gauth.SaveCredentialsFile("credentials.json")
+    gauth.SaveCredentialsFile(google_credentials)
 
 drive = GoogleDrive(gauth)
 
