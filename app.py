@@ -7,51 +7,79 @@ import json
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from io import BytesIO
-from app import app
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 
-
+# ID file Google Drive
+FILE_ID = '1qTz1QNwRu3wvTlM_EL43FvnU_dKQ6Qpc'  # Ganti dengan file ID dari file Excel di Google Drive
 PENGUNJUNG_SHEET = 'Pengunjung' #Nama sheet di file excel yang digunakan untuk menyimpan data visitor
 KUNJUNGAN_SHEET = 'Kunjungan' #Nama sheet di file excel yang digunakan untuk merekam data kunjungan visitor
 
+
 #Konfigurasi Google Drive
-# Muat kredensial dari environment variable
-google_credentials = json.loads(os.environ['GOOGLE_CREDENTIALS'])
+# Konfigurasi Google Drive dengan error handling
+def initialize_drive():
+    try:
+        # Muat kredensial dari environment variable
+        google_credentials = json.loads(os.environ.get('GOOGLE_CREDENTIALS', '{}'))
+        
+        # Gunakan temporary directory yang aman
+        temp_cred_path = '/tmp/credentials.json'
+        
+        # Simpan kredensial sementara
+        with open(temp_cred_path, 'w') as cred_file:
+            json.dump(google_credentials, cred_file)
+        
+        # Autentikasi
+        gauth = GoogleAuth()
+        gauth.LoadCredentialsFile(temp_cred_path)
+        
+        if not gauth.credentials or gauth.credentials.invalid:
+            raise Exception("Invalid Google Drive credentials")
+            
+        return GoogleDrive(gauth)
+    except Exception as e:
+        print(f"Error initializing Google Drive: {str(e)}")
+        return None
 
-# Simpan kredensial sementara ke file
-with open('credentials.json', 'w') as cred_file:
-    json.dump(google_credentials, cred_file)
-
-# Autentikasi Google Drive
-gauth = GoogleAuth()
-gauth.LoadCredentialsFile(google_credentials)
-if not gauth.credentials or gauth.credentials.invalid:
-    gauth.LocalWebserverAuth()  # Membuka autentikasi di browser
-    gauth.SaveCredentialsFile(google_credentials)
-
-drive = GoogleDrive(gauth)
-
-# ID file Google Drive
-FILE_ID = '1qTz1QNwRu3wvTlM_EL43FvnU_dKQ6Qpc'  # Ganti dengan file ID dari file Excel di Google Drive
-
-def load_excel_file():
-    """Download dan baca file Excel dari Google Drive."""
-    file = drive.CreateFile({'id': FILE_ID})
-    file.GetContentFile('temp.xlsx')  # Unduh file sebagai sementara
-    workbook = load_workbook('temp.xlsx')
-    return workbook
-
-def save_excel_file(workbook):
-    """Simpan file Excel ke Google Drive."""
-    with BytesIO() as output:
-        workbook.save(output)  # Simpan workbook ke BytesIO
-        output.seek(0)
+def load_excel_file(drive):
+    """Download dan baca file Excel dari Google Drive dengan error handling."""
+    try:
+        if not drive:
+            raise Exception("Google Drive not initialized")
+            
         file = drive.CreateFile({'id': FILE_ID})
-        file.SetContentString(output.getvalue().decode('latin1'))  # Update konten file di Drive
-        file.Upload()
+        temp_path = '/tmp/temp.xlsx'
+        file.GetContentFile(temp_path)
+        workbook = load_workbook(temp_path)
+        
+        # Cleanup
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+            
+        return workbook
+    except Exception as e:
+        print(f"Error loading Excel file: {str(e)}")
+        return None
+
+def save_excel_file(drive, workbook):
+    """Simpan file Excel ke Google Drive dengan error handling."""
+    try:
+        if not drive:
+            raise Exception("Google Drive not initialized")
+            
+        with BytesIO() as output:
+            workbook.save(output)
+            output.seek(0)
+            file = drive.CreateFile({'id': FILE_ID})
+            file.SetContentString(output.getvalue().decode('latin1'))
+            file.Upload()
+        return True
+    except Exception as e:
+        print(f"Error saving Excel file: {str(e)}")
+        return False
 
 @app.route("/")
 def index():
@@ -60,18 +88,35 @@ def index():
 @app.route("/visilog", methods=["POST", "GET"])
 def home():
     if request.method == 'POST':
-        id_pengunjung = request.form.get('id_pengunjung')
 
         try:
-            # Load workbook dari Google Drive
-            wb = load_excel_file()
+            id_pengunjung = request.form.get('id_pengunjung')
+
+            # Initialize Google Drive
+            drive = initialize_drive()
+            if not drive:
+                return jsonify({
+                    'success': False,
+                    'message': 'Failed to initialize Google Drive',
+                    'redirect': url_for('home')
+                }), 500
+            
+            # Load workbook
+            wb = load_excel_file(drive)
+            if not wb:
+                return jsonify({
+                    'success': False,
+                    'message': 'Failed to load Excel file',
+                    'redirect': url_for('home')
+                }), 500
+                
             pengunjung_sheet = wb[PENGUNJUNG_SHEET]
             kunjungan_sheet = wb[KUNJUNGAN_SHEET]
-
-            # Cari data pengunjung berdasarkan ID
+            
+            # Cari data pengunjung
             pengunjung = None
             for row in pengunjung_sheet.iter_rows(min_row=2, values_only=True):
-                if str(row[0]) == id_pengunjung:  # Kolom pertama adalah ID
+                if str(row[0]) == id_pengunjung:
                     pengunjung = row
                     break
 
@@ -102,5 +147,8 @@ def home():
 
 
 
-if __name__ == '__main__':
-    app.run(debug = True, host = '0.0.0.0', port = 5555)
+# Konfigurasi untuk production
+app.debug = False if os.environ.get('FLASK_ENV') == 'production' else True
+
+#if __name__ == '__main__':
+    #app.run(debug = True, host = '0.0.0.0', port = 5555)
