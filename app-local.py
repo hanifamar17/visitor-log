@@ -2,55 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from openpyxl import load_workbook
 from datetime import datetime
 import os
-import json
-
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-from io import BytesIO
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-
-
+# Konfigurasi file Excel
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+EXCEL_FILE = os.path.join(BASE_DIR, 'data', 'visitor-log.xlsx')
+EXCEL_FILE = r'E:\App-Development\visitor-log\data\visitor-log.xlsx' #Direktori file excel yang digunakan untuk menyimpan data visitor
 PENGUNJUNG_SHEET = 'Pengunjung' #Nama sheet di file excel yang digunakan untuk menyimpan data visitor
 KUNJUNGAN_SHEET = 'Kunjungan' #Nama sheet di file excel yang digunakan untuk merekam data kunjungan visitor
-
-#Konfigurasi Google Drive
-# Muat kredensial dari environment variable
-google_credentials = json.loads(os.environ['GOOGLE_CREDENTIALS'])
-
-# Simpan kredensial sementara ke file
-with open('credentials.json', 'w') as cred_file:
-    json.dump(google_credentials, cred_file)
-
-# Autentikasi Google Drive
-gauth = GoogleAuth()
-gauth.LoadCredentialsFile("credentials.json")
-if not gauth.credentials or gauth.credentials.invalid:
-    gauth.LocalWebserverAuth()  # Membuka autentikasi di browser
-    gauth.SaveCredentialsFile("credentials.json")
-
-drive = GoogleDrive(gauth)
-
-# ID file Google Drive
-FILE_ID = '1qTz1QNwRu3wvTlM_EL43FvnU_dKQ6Qpc'  # Ganti dengan file ID dari file Excel di Google Drive
-
-def load_excel_file():
-    """Download dan baca file Excel dari Google Drive."""
-    file = drive.CreateFile({'id': FILE_ID})
-    file.GetContentFile('temp.xlsx')  # Unduh file sebagai sementara
-    workbook = load_workbook('temp.xlsx')
-    return workbook
-
-def save_excel_file(workbook):
-    """Simpan file Excel ke Google Drive."""
-    with BytesIO() as output:
-        workbook.save(output)  # Simpan workbook ke BytesIO
-        output.seek(0)
-        file = drive.CreateFile({'id': FILE_ID})
-        file.SetContentString(output.getvalue().decode('latin1'))  # Update konten file di Drive
-        file.Upload()
 
 @app.route("/")
 def index():
@@ -62,8 +23,8 @@ def home():
         id_pengunjung = request.form.get('id_pengunjung')
 
         try:
-            # Load workbook dari Google Drive
-            wb = load_excel_file()
+            # Load workbook dan sheet
+            wb = load_workbook(EXCEL_FILE)
             pengunjung_sheet = wb[PENGUNJUNG_SHEET]
             kunjungan_sheet = wb[KUNJUNGAN_SHEET]
 
@@ -78,7 +39,7 @@ def home():
                 # Rekam kunjungan
                 TANGGAL_KUNJUNGAN = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 kunjungan_sheet.append([pengunjung[0], pengunjung[1], pengunjung[2], TANGGAL_KUNJUNGAN])
-                save_excel_file(wb)  # Simpan workbook kembali ke Google Drive
+                wb.save(EXCEL_FILE)
 
                 return jsonify({
                     'success': True,
@@ -98,8 +59,6 @@ def home():
         return redirect(url_for('home'))
 
     return render_template('visitor-log.html')
-
-
 
 if __name__ == '__main__':
     app.run(debug = True, host = '0.0.0.0', port = 5555)
