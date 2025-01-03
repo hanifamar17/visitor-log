@@ -7,6 +7,7 @@ import json
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from io import BytesIO
+from app import app
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
